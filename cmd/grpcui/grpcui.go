@@ -62,6 +62,8 @@ var (
 		Print version.`))
 	plaintext = flags.Bool("plaintext", false, prettify(`
 		Use plain-text HTTP/2 when connecting to server (no TLS).`))
+	socket = flags.Bool("socket", false, prettify(`
+		Use socket for connection.`))
 	insecure = flags.Bool("insecure", false, prettify(`
 		Skip server certificate and domain verification. (NOT SECURE!) Not
 		valid with -plaintext option.`))
@@ -536,7 +538,7 @@ func main() {
 		opts = append(opts, grpc.WithAuthority(*authority))
 	}
 	network := "tcp"
-	if isUnixSocket != nil && isUnixSocket() {
+	if isUnixSocket != nil && isUnixSocket() || *socket {
 		network = "unix"
 	}
 	cc, err := dial(dialCtx, network, target, creds, *connectFailFast, opts...)
